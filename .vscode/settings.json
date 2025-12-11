@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Team1product.sln"
+    "dotnet.defaultSolution": "team1product.sln"
 }
