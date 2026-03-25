@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // これが重要！
+using UnityEngine.InputSystem; 
 
 public class SimpleGun : MonoBehaviour
 {
@@ -8,17 +8,29 @@ public class SimpleGun : MonoBehaviour
     public Transform spawnPoint;    // 銃口
     public float bulletSpeed = 20f; // 弾の速さ
 
+    [Header("連射設定")]
+    [Tooltip("弾と弾の発射間隔（秒）。小さいほど連射が速くなります")]
+    public float fireRate = 0.1f; 
+    private float nextFireTime = 0f; // 次に撃てる時間（内部計算用）
+
     [Header("入力設定")]
     // ここにコントローラーのボタン設定を登録します
     public InputActionProperty triggerAction;
 
     void Update()
     {
-        // 毎フレーム「トリガーが押されたか？」をチェック
-        // (actionが設定されていて、かつ、そのフレームで押された瞬間なら実行)
-        if (triggerAction.action != null && triggerAction.action.WasPressedThisFrame())
+        // 変更点1：「押された瞬間」ではなく「押され続けているか」をチェック
+        if (triggerAction.action != null && triggerAction.action.IsPressed())
         {
-            Fire();
+            // 変更点2：現在の時間が「次に撃てる時間」を過ぎているかチェック
+            if (Time.time >= nextFireTime)
+            {
+                // 次に撃てる時間を更新（現在時刻 ＋ 発射間隔）
+                nextFireTime = Time.time + fireRate;
+                
+                // 弾を撃つ
+                Fire();
+            }
         }
     }
 
